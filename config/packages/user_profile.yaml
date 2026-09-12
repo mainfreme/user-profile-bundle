@@ -1,0 +1,16 @@
+user_profile:
+    storage:
+        driver: filesystem
+        filesystem:
+            root: '%kernel.project_dir%/var/users'
+    bio_max_length: 2000
+    default_role: ROLE_USER
+    role_tree:
+        - role: ROLE_ADMIN
+          label: Administrator
+          children:
+              - role: ROLE_MODERATOR
+                label: Moderator
+                children:
+                    - role: ROLE_USER
+                      label: Użytkownik

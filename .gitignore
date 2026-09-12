@@ -1,0 +1,9 @@
+/vendor/
+/.phpunit.cache/
+/var/
+/.env
+/.env.local
+/.php-cs-fixer.cache
+/phpstan-baseline.neon
+/frontend/node_modules/
+/frontend/dist/

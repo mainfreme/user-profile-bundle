@@ -1,0 +1,242 @@
+You are generating UI for Sales Tracker module bundles. The result MUST look identical to the core Vue 3 + Tailwind frontend. Do not invent a new visual language. Copy this design system exactly.
+
+STACK
+- Vue 3 + TypeScript + <script setup>
+- Tailwind CSS (utility-first). Almost no custom CSS.
+- Heroicons-style outline icons (24x24, stroke currentColor, stroke-width 2, rounded caps/joins)
+- Polish UI copy
+- Reuse existing component class names: btn, btn-primary, btn-secondary, btn-danger, btn-sm, btn-lg, input, label, card, badge, badge-primary, badge-success, badge-warning, badge-danger, table
+
+BODY / THEME
+- Dark-only app. No light theme.
+- html/body: bg-dark-900, text-dark-100, antialiased
+- Font: system/default. Do not add Google Fonts.
+- Language: pl
+
+COLOR TOKENS (exact hex, Tailwind extend)
+
+primary (blue accent):
+50 #eff6ff
+100 #dbeafe
+200 #bfdbfe
+300 #93c5fd
+400 #60a5fa
+500 #3b82f6
+600 #2563eb   ← main CTA / logo tile / avatar
+700 #1d4ed8
+800 #1e40af
+900 #1e3a8a
+950 #172554
+
+dark (slate surfaces):
+50 #f8fafc
+100 #f1f5f9
+200 #e2e8f0
+300 #cbd5e1   ← labels
+400 #94a3b8   ← muted text, icons, table headers, placeholders
+500 #64748b   ← italic empty states
+600 #475569   ← borders on inputs, hover rows
+700 #334155   ← sidebar hover, borders, pulse skeletons
+800 #1e293b   ← sidebar, header, cards
+900 #0f172a   ← page background
+950 #020617
+
+Semantic:
+- success: green-400 on green-600/20
+- warning: yellow-400 on yellow-600/20
+- danger: red-400 on red-600/20, danger buttons bg-red-600 hover:bg-red-700
+- info/links: primary-400, hover:underline
+- orange (priority high): orange-400 on orange-600/20
+- purple used only for some dashboard stat icons: purple-400 on purple-600/20
+
+COMPONENT CLASSES (copy exactly)
+
+.btn
+inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors
+focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-900
+
+.btn-primary  bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500
+.btn-secondary  bg-dark-700 text-dark-100 hover:bg-dark-600 focus:ring-dark-500
+.btn-danger  bg-red-600 text-white hover:bg-red-700 focus:ring-red-500
+.btn-sm  px-3 py-1.5 text-sm
+.btn-lg  px-6 py-3 text-lg
+disabled buttons: opacity-50 / opacity-70 + cursor-wait when loading
+
+.input
+w-full px-3 py-2 rounded-lg bg-dark-800 border border-dark-600
+text-dark-100 placeholder-dark-400
+focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+transition-colors
+(used for input, select, textarea)
+
+.label
+block text-sm font-medium text-dark-300 mb-1
+required asterisk: <span class="text-red-400">*</span>
+
+.card
+bg-dark-800 rounded-xl border border-dark-700 p-6
+list tables: extra classes "card p-0 overflow-hidden"
+
+.badge
+inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+.badge-primary  bg-primary-600/20 text-primary-400
+.badge-success  bg-green-600/20 text-green-400
+.badge-warning  bg-yellow-600/20 text-yellow-400
+.badge-danger   bg-red-600/20 text-red-400
+compact badge: text-[10px] px-1.5 py-0.5
+
+.table  w-full text-left
+.table th  px-4 py-3 text-xs font-medium text-dark-400 uppercase tracking-wider bg-dark-800/50
+.table td  px-4 py-3 text-sm text-dark-200 border-t border-dark-700
+.table tr:hover td  bg-dark-800/30
+
+APP SHELL (core already owns this; module views render ONLY inside <main class="p-6">)
+- Page: min-h-screen bg-dark-900
+- Sidebar: fixed left, h-screen, bg-dark-800, border-r border-dark-700, z-40
+  expanded w-64, collapsed w-20
+  logo bar h-16, px-4, border-b border-dark-700
+  logo mark: w-10 h-10 bg-primary-600 rounded-lg, white icon
+  app name: text-lg font-semibold text-white
+  nav item: flex gap-3 px-3 py-2.5 rounded-lg text-dark-300 hover:bg-dark-700 hover:text-white
+  active: bg-dark-700 text-white
+  icons w-5 h-5
+  submenu: ml-8, text-sm text-dark-400, child icons w-4 h-4
+  bottom settings separated by border-t border-dark-700
+- Header: h-16 bg-dark-800 border-b border-dark-700 px-6
+  title: text-lg font-medium text-white
+  icon buttons: p-2 rounded-lg text-dark-400 hover:bg-dark-700 hover:text-white
+  user avatar: w-8 h-8 bg-primary-600 rounded-full text-white text-sm font-medium
+- Main content padding is already p-6. Module views start with space-y-6.
+
+PAGE PATTERNS
+
+1) LIST PAGE
+Outer: <div class="space-y-6">
+Toolbar: flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between
+Title: text-xl font-semibold text-white  (or omit if header already has it)
+Primary action: <a/button class="btn btn-primary"> PlusIcon w-4 h-4 mr-2 + label
+Secondary view switches: btn btn-secondary btn-sm with icon mr-1
+Filters: SearchField full width, optional select class="input w-40"
+Table in card p-0 overflow-hidden
+Empty: td colspan, text-center py-8 text-dark-400
+Loading: LoadingDots in cell, text-dark-400, animated dots
+Row entity: avatar circle + name as text-primary-400 hover:underline
+Row actions: p-1.5 rounded hover:bg-dark-600 text-dark-400 hover:text-white; delete hover:text-red-400
+Pagination footer: flex items-center justify-between px-4 py-3 border-t border-dark-700
+  left: text-sm text-dark-400 "X–Y z Z"
+  right: two btn btn-secondary btn-sm chevrons
+Default page size: 20
+
+Avatars:
+- contacts: bg-green-600 rounded-full
+- employees: typically primary/green circle with initials
+- header user: bg-primary-600
+Initials: first+last letter uppercase, one word → first letter, empty → ?
+
+2) FORM PAGE
+Outer: max-w-2xl (or flex + sticky AI panel on the right)
+H1: text-2xl font-semibold text-white mb-6
+Form: class="card space-y-6"
+Field groups: single column; related fields grid grid-cols-1 md:grid-cols-2 or md:grid-cols-3 gap-4
+Repeating rows: flex items-center gap-2; add = btn btn-secondary btn-sm; remove = p-2 rounded bg-dark-700 text-dark-400 hover:text-red-400 disabled:opacity-50
+Footer: flex justify-end gap-3 pt-4 border-t border-dark-700
+  Anuluj = btn btn-secondary
+  Submit = btn btn-primary, disabled while saving, text "Zapisywanie..." / "Zapisz zmiany" / "Utwórz …"
+Loading skeleton: card with several h-16 bg-dark-700 rounded animate-pulse
+Textarea: class="input" rows="4" or min-h-[5rem]
+
+3) DETAIL PAGE
+Outer: space-y-6
+Header row: flex items-start justify-between
+Left: avatar w-16 h-16 + h1 text-2xl font-semibold text-white + subtitle text-dark-400
+Right: Edytuj btn btn-secondary (PencilIcon mr-2), Usuń btn btn-danger (TrashIcon mr-2)
+Body: grid grid-cols-1 lg:grid-cols-2 gap-6 of cards
+Card title: text-lg font-medium or font-semibold text-white mb-4, optional muted icon w-5 h-5 text-dark-400
+List rows inside card: p-2 rounded bg-dark-700/50
+Empty: text-dark-500 italic
+Definition lists: dt text-sm text-dark-400, dd text-dark-200, grid gap-4
+
+4) SETTINGS / MODULE CARDS
+card, h2 text-lg font-semibold text-white mb-4
+description text-sm text-dark-400
+links text-sm text-primary-400 hover:text-primary-300
+module tiles: p-4 rounded-lg border
+  enabled: bg-dark-700/50 border-dark-600
+  disabled: bg-dark-800/50 border-dark-700 opacity-60
+icon tile w-10 h-10 rounded-lg bg-primary-600/20 text-primary-400 (or bg-dark-600 text-dark-400 if off)
+grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4
+
+5) DASHBOARD STATS
+grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4
+each: card flex items-center gap-4
+icon box w-12 h-12 rounded-lg bg-{color}-600/20, icon w-6 h-6 text-{color}-400
+label text-sm text-dark-400
+value text-2xl font-semibold text-white
+
+6) MODAL
+overlay: fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4
+panel: card w-full max-w-2xl max-h-[90vh] overflow-y-auto space-y-4
+title text-lg font-semibold text-white
+subtitle text-sm text-dark-400 mt-1
+close: btn btn-secondary btn-sm with XMarkIcon
+
+7) DROPDOWN MENU
+absolute z-20 mt-2 min-w-[12rem] rounded-lg border border-dark-600 bg-dark-800 py-1 shadow-xl
+section label: px-3 py-2 text-xs font-medium uppercase tracking-wide text-dark-400
+item: flex w-full items-center px-3 py-2 text-left text-sm text-dark-200 hover:bg-dark-700 hover:text-white
+divider: my-1 border-t border-dark-700
+
+8) TOASTS (core owns them; match if you emit UI)
+fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-lg
+item: flex items-start gap-3 p-4 rounded-lg border backdrop-blur-sm
+success: bg-green-600/10 border-green-600/30 text-green-400
+error: bg-red-600/10 border-red-600/30 text-red-400
+warning: bg-yellow-600/10 border-yellow-600/30 text-yellow-400
+info: bg-primary-600/10 border-primary-600/30 text-primary-400
+title font-medium text-white, message text-sm opacity-80
+slide in from right 0.3s
+
+9) SEARCH FIELD
+relative wrapper
+left icon absolute inset-y-0 left-0 w-10 text-dark-400 MagnifyingGlassIcon h-4 w-4
+input: input w-full pl-10 pr-10 type=search, hide native search decorations
+clear button right w-10 text-dark-400 hover:text-white
+debounce ~300ms
+
+10) SIDE PANEL (e.g. AI)
+card flex flex-col h-[32rem] lg:h-[calc(100vh-8rem)] lg:w-96 lg:sticky lg:top-6
+header pb-4 border-b border-dark-700
+
+SPACING / RADIUS / MOTION
+- Page vertical rhythm: space-y-6
+- Form fields: space-y-6, inner lists space-y-2
+- Gaps: gap-2, gap-3, gap-4, gap-6
+- Radius: buttons/inputs/nav rounded-lg; cards rounded-xl; badges/avatars rounded-full
+- Transitions: transition-colors; layout width transition-all duration-300
+- No drop shadows on cards. Shadow only on dropdowns (shadow-xl).
+- Focus rings: ring-2 ring-primary-500 on inputs; buttons also ring-offset-2 ring-offset-dark-900
+- Do not use rounded-none, huge shadows, gradients, glassmorphism (except toast backdrop-blur-sm), neon, or light cards.
+
+ICON RULES
+- Outline Heroicons, class w-4 h-4 in buttons, w-5 h-5 in nav/headers, w-6 h-6 in stats
+- Icon in primary/secondary buttons sits before label with mr-2 (sm buttons mr-1)
+- Do not use emoji as icons
+
+COPY / UX CONVENTIONS
+- List create CTA: "Nowy …" / "Dodaj …"
+- Form cancel: "Anuluj"
+- Save: "Zapisz zmiany" vs create: "Utwórz …"
+- Delete confirm via window.confirm or modal; danger button
+- Empty lists: "Brak … do wyświetlenia" / "Brak … dla frazy „{search}”"
+- Notifications titles: "Sukces" / "Błąd"
+- Loading text: "Ładowanie…" or "Loading" + animated dots
+- Links inside dark UI: text-primary-400 hover:underline
+
+DO NOT
+- Do not restyle the shell (sidebar/header) inside a module bundle unless asked
+- Do not introduce new color palettes, Inter/Roboto, or light backgrounds
+- Do not use arbitrary one-off CSS when a utility or .btn/.input/.card exists
+- Do not make cards white, navy-blue, or Material/Bootstrap looking
+- Match existing core screens pixel-for-pixel in density: compact tables, 16px header, 24px page padding
+
+When building a screen, pick one of the page patterns above and compose only from these tokens and classes.

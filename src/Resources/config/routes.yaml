@@ -1,0 +1,6 @@
+user_profile_controllers:
+    resource: ../../Infrastructure/Http/Controller/
+    type: attribute
+
+user_profile_swagger:
+    resource: routes/swagger.yaml
