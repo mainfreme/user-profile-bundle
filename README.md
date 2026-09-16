@@ -10,7 +10,7 @@ Symfony bundle do zarządzania **użytkownikiem**: edycja profilu (**Bio**) oraz
 ## Instalacja
 
 ```bash
-composer require swh/user-profile-bundle
+composer require swh/user-profile-bundle:^1.0
 ```
 
 Zarejestruj routing w `config/routes.yaml`:
@@ -216,6 +216,15 @@ composer cs-check     # sprawdzenie stylu bez zmian
 composer quality      # cs-check + phpstan + phpunit
 ```
 
-## Licencja
 
-MIT
+### Jeśli pakiet nie jest na Packagist, w composer.json hosta:
+```bash
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "git@github.com:mainfreme/user-profile-bundel.git"
+    }
+  ]
+}
+```
