@@ -1,5 +1,5 @@
 {
-    "name": "swh/user-profile-bundel",
+    "name": "swh/user-profile-bundle",
     "description": "Symfony bundle do zarządzania profilem użytkownika (Bio) oraz przypisaną rolą, w architekturze DDD i CQRS",
     "type": "symfony-bundle",
     "license": "MIT",
