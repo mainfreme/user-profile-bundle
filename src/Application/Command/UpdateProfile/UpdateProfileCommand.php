@@ -2,14 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Command\UpdateProfile;
+namespace SWH\UserProfile\Application\Command\UpdateProfile;
+
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
+use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
 
 final readonly class UpdateProfileCommand
 {
     public function __construct(
-        public string $userId,
-        public string $bio,
-        public ?string $displayName = null,
+        public UserId $userId,
+        public ?Bio $bio = null,
+        public ?DisplayName $displayName = null,
     ) {
     }
 }

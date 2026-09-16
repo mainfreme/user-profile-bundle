@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Infrastructure\Persistence;
+namespace SWH\UserProfile\Tests\Unit\Infrastructure\Persistence;
 
-use Mainfreme\UserProfile\Domain\User\Model\User;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Bio;
-use Mainfreme\UserProfile\Domain\User\ValueObject\DisplayName;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Email;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
-use Mainfreme\UserProfile\Infrastructure\Persistence\FilesystemUserRepository;
+use SWH\UserProfile\Domain\User\Enum\UserRole;
+use SWH\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
+use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
+use SWH\UserProfile\Domain\User\ValueObject\Email;
+use SWH\UserProfile\Infrastructure\Persistence\FilesystemUserRepository;
 use PHPUnit\Framework\TestCase;
 
 final class FilesystemUserRepositoryTest extends TestCase
@@ -37,7 +37,7 @@ final class FilesystemUserRepositoryTest extends TestCase
         $user = User::register(
             email: Email::fromString('jan@example.com'),
             displayName: DisplayName::fromString('Jan Kowalski'),
-            role: Role::fromString('ROLE_ADMIN', ['ROLE_USER', 'ROLE_ADMIN']),
+            role: UserRole::Admin,
             bio: Bio::fromString('Bio na dysku', 2000),
         );
 

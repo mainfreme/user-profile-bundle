@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Query\ListUsers;
+namespace SWH\UserProfile\Application\Query\ListUsers;
+
+use SWH\UserProfile\Domain\User\Enum\UserRole;
 
 final readonly class ListUsersQuery
 {
     public function __construct(
-        public ?string $role = null,
+        public ?UserRole $role = null,
     ) {
     }
 }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Domain\User\Model;
+namespace SWH\UserProfile\Tests\Unit\Domain\User\Model;
 
-use Mainfreme\UserProfile\Domain\User\Model\User;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Bio;
-use Mainfreme\UserProfile\Domain\User\ValueObject\DisplayName;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Email;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\Enum\UserRole;
+use SWH\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
+use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
+use SWH\UserProfile\Domain\User\ValueObject\Email;
 use PHPUnit\Framework\TestCase;
 
 final class UserTest extends TestCase
@@ -41,7 +41,7 @@ final class UserTest extends TestCase
     {
         $user = $this->createUser();
 
-        $user->assignRole(Role::fromString('ROLE_ADMIN', ['ROLE_USER', 'ROLE_ADMIN']));
+        $user->assignRole(UserRole::Admin);
 
         self::assertSame('ROLE_ADMIN', $user->role()->toString());
     }
@@ -51,7 +51,7 @@ final class UserTest extends TestCase
         return User::register(
             email: Email::fromString('jan@example.com'),
             displayName: DisplayName::fromString('Jan Kowalski'),
-            role: Role::fromString('ROLE_USER', ['ROLE_USER', 'ROLE_ADMIN']),
+            role: UserRole::User,
             bio: Bio::fromString('Lubię PHP', 2000),
         );
     }

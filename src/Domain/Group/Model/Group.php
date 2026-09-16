@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\Group\Model;
+namespace SWH\UserProfile\Domain\Group\Model;
 
 use DateTimeImmutable;
-use Mainfreme\UserProfile\Domain\Group\Exception\InvalidGroupDescriptionException;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupId;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupName;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\Group\Exception\InvalidGroupDescriptionException;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupId;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
 
 final class Group
 {

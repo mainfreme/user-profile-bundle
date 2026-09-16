@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\Persistence;
+namespace SWH\UserProfile\Infrastructure\Persistence;
 
-use Mainfreme\UserProfile\Domain\User\Model\RoleTree;
-use Mainfreme\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
 use RuntimeException;
 
 final class FilesystemRoleCatalog implements RoleCatalogInterface

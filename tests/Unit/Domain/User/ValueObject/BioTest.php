@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Domain\User\ValueObject;
+namespace SWH\UserProfile\Tests\Unit\Domain\User\ValueObject;
 
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidBioException;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Bio;
+use SWH\UserProfile\Domain\User\Exception\InvalidBioException;
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
 use PHPUnit\Framework\TestCase;
 
 final class BioTest extends TestCase

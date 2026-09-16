@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Query\GetUser;
+namespace SWH\UserProfile\Application\Query\GetUser;
 
-use Mainfreme\UserProfile\Application\DTO\UserResponse;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
-use Mainfreme\UserProfile\Domain\User\Exception\UserNotFoundException;
-use Mainfreme\UserProfile\Domain\User\Port\UserRepositoryInterface;
-use Mainfreme\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Application\DTO\UserResponse;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Exception\UserNotFoundException;
+use SWH\UserProfile\Domain\User\Port\UserRepositoryInterface;
 use Throwable;
 
 final class GetUserHandler
@@ -21,16 +20,15 @@ final class GetUserHandler
     public function __invoke(GetUserQuery $query): UserResponse
     {
         try {
-            $userId = UserId::fromString($query->userId);
-            $user = $this->userRepository->findById($userId);
+            $user = $this->userRepository->findById($query->userId);
 
             if (null === $user) {
-                throw UserNotFoundException::forId($userId->toString());
+                throw UserNotFoundException::forId($query->userId);
             }
 
             return UserResponse::success($user);
         } catch (UserDomainException $exception) {
-            return UserResponse::error($exception->getMessage());
+            return UserResponse::fromException($exception);
         } catch (Throwable) {
             return UserResponse::error('An unexpected error occurred while reading the user.');
         }

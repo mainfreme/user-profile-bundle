@@ -2,25 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\Http\Controller;
+namespace SWH\UserProfile\Infrastructure\Http\Controller;
 
-use JsonException;
-use Mainfreme\UserProfile\Application\Command\AssignRole\AssignRoleCommand;
-use Mainfreme\UserProfile\Application\Command\CreateGroup\CreateGroupCommand;
-use Mainfreme\UserProfile\Application\Command\CreateRole\CreateRoleCommand;
-use Mainfreme\UserProfile\Application\Command\CreateUser\CreateUserCommand;
-use Mainfreme\UserProfile\Application\Command\UpdateProfile\UpdateProfileCommand;
-use Mainfreme\UserProfile\Application\DTO\GroupListResponse;
-use Mainfreme\UserProfile\Application\DTO\GroupResponse;
-use Mainfreme\UserProfile\Application\DTO\RoleTreeResponse;
-use Mainfreme\UserProfile\Application\DTO\UserListResponse;
-use Mainfreme\UserProfile\Application\DTO\UserResponse;
-use Mainfreme\UserProfile\Application\Query\GetRoleTree\GetRoleTreeQuery;
-use Mainfreme\UserProfile\Application\Query\GetUser\GetUserQuery;
-use Mainfreme\UserProfile\Application\Query\ListGroups\ListGroupsQuery;
-use Mainfreme\UserProfile\Application\Query\ListUsers\ListUsersQuery;
-use Mainfreme\UserProfile\Application\Service\MessageBusDispatcher;
-use Mainfreme\UserProfile\Domain\User\Enum\OperationStatus;
+use SWH\UserProfile\Application\Command\AssignRole\AssignRoleCommand;
+use SWH\UserProfile\Application\Command\CreateGroup\CreateGroupCommand;
+use SWH\UserProfile\Application\Command\CreateRole\CreateRoleCommand;
+use SWH\UserProfile\Application\Command\CreateUser\CreateUserCommand;
+use SWH\UserProfile\Application\Command\UpdateProfile\UpdateProfileCommand;
+use SWH\UserProfile\Application\DTO\GroupListResponse;
+use SWH\UserProfile\Application\DTO\GroupResponse;
+use SWH\UserProfile\Application\DTO\JsonHttpResponse;
+use SWH\UserProfile\Application\DTO\RoleTreeResponse;
+use SWH\UserProfile\Application\DTO\UserListResponse;
+use SWH\UserProfile\Application\DTO\UserResponse;
+use SWH\UserProfile\Application\Query\GetRoleTree\GetRoleTreeQuery;
+use SWH\UserProfile\Application\Query\GetUser\GetUserQuery;
+use SWH\UserProfile\Application\Query\ListGroups\ListGroupsQuery;
+use SWH\UserProfile\Application\Query\ListUsers\ListUsersQuery;
+use SWH\UserProfile\Application\Service\MessageBusDispatcher;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
+use SWH\UserProfile\Domain\User\Enum\UserRole;
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
+use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
+use SWH\UserProfile\Domain\User\ValueObject\Email;
+use SWH\UserProfile\Domain\User\ValueObject\PlainPassword;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Infrastructure\Http\Request\JsonBody;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,6 +41,7 @@ final class UserProfileRestController
 {
     public function __construct(
         private readonly MessageBusDispatcher $dispatcher,
+        private readonly int $bioMaxLength,
     ) {
     }
 
@@ -49,12 +57,7 @@ final class UserProfileRestController
         /** @var RoleTreeResponse $response */
         $response = $this->dispatcher->dispatchQuery(new GetRoleTreeQuery());
 
-        return new JsonResponse(
-            $response->toArray(),
-            OperationStatus::Success === $response->status
-                ? Response::HTTP_OK
-                : Response::HTTP_INTERNAL_SERVER_ERROR,
-        );
+        return $this->json($response, Response::HTTP_OK);
     }
 
     #[Route('/api/roles', name: 'user_profile_create_role', methods: ['POST'])]
@@ -76,27 +79,16 @@ final class UserProfileRestController
     )]
     #[OA\Response(response: 201, description: 'Rola dodana')]
     #[OA\Response(response: 400, description: 'Błąd walidacji')]
-    public function createRole(Request $request): JsonResponse
+    public function createRole(JsonBody $body): JsonResponse
     {
-        $payload = $this->decodeJson($request);
-
-        if ($payload instanceof JsonResponse) {
-            return $payload;
-        }
-
         /** @var RoleTreeResponse $response */
         $response = $this->dispatcher->dispatchCommand(new CreateRoleCommand(
-            role: $this->stringValue($payload, 'role'),
-            label: $this->stringValue($payload, 'label'),
-            parentRole: $this->optionalString($payload, 'parentRole'),
+            role: $body->string('role'),
+            label: $body->string('label'),
+            parentRole: $body->optionalString('parentRole'),
         ));
 
-        return new JsonResponse(
-            $response->toArray(),
-            OperationStatus::Success === $response->status
-                ? Response::HTTP_CREATED
-                : $this->resolveErrorStatusCode($response->errorMessage ?? ''),
-        );
+        return $this->json($response, Response::HTTP_CREATED);
     }
 
     #[Route('/api/groups', name: 'user_profile_list_groups', methods: ['GET'])]
@@ -111,12 +103,7 @@ final class UserProfileRestController
         /** @var GroupListResponse $response */
         $response = $this->dispatcher->dispatchQuery(new ListGroupsQuery());
 
-        return new JsonResponse(
-            $response->toArray(),
-            OperationStatus::Success === $response->status
-                ? Response::HTTP_OK
-                : $this->resolveErrorStatusCode($response->errorMessage ?? ''),
-        );
+        return $this->json($response, Response::HTTP_OK);
     }
 
     #[Route('/api/groups', name: 'user_profile_create_group', methods: ['POST'])]
@@ -138,29 +125,16 @@ final class UserProfileRestController
     )]
     #[OA\Response(response: 201, description: 'Grupa utworzona')]
     #[OA\Response(response: 400, description: 'Błąd walidacji')]
-    public function createGroup(Request $request): JsonResponse
+    public function createGroup(JsonBody $body): JsonResponse
     {
-        $payload = $this->decodeJson($request);
-
-        if ($payload instanceof JsonResponse) {
-            return $payload;
-        }
-
         /** @var GroupResponse $response */
         $response = $this->dispatcher->dispatchCommand(new CreateGroupCommand(
-            name: $this->stringValue($payload, 'name'),
-            description: $this->optionalString($payload, 'description'),
-            role: $this->optionalString($payload, 'role'),
+            name: GroupName::fromString($body->string('name')),
+            description: $body->optionalString('description'),
+            role: UserRole::tryFromString($body->optionalString('role')),
         ));
 
-        if (OperationStatus::Success === $response->status) {
-            return new JsonResponse($response->toArray(), Response::HTTP_CREATED);
-        }
-
-        return new JsonResponse(
-            $response->toArray(),
-            $this->resolveErrorStatusCode($response->errorMessage ?? ''),
-        );
+        return $this->json($response, Response::HTTP_CREATED);
     }
 
     #[Route('/api/users', name: 'user_profile_list', methods: ['GET'])]
@@ -180,17 +154,13 @@ final class UserProfileRestController
     public function list(Request $request): JsonResponse
     {
         $role = $request->query->get('role');
-        $roleFilter = \is_string($role) ? $role : null;
 
         /** @var UserListResponse $response */
-        $response = $this->dispatcher->dispatchQuery(new ListUsersQuery($roleFilter));
+        $response = $this->dispatcher->dispatchQuery(new ListUsersQuery(
+            UserRole::tryFromString(\is_string($role) ? $role : null),
+        ));
 
-        return new JsonResponse(
-            $response->toArray(),
-            OperationStatus::Success === $response->status
-                ? Response::HTTP_OK
-                : $this->resolveErrorStatusCode($response->errorMessage ?? ''),
-        );
+        return $this->json($response, Response::HTTP_OK);
     }
 
     #[Route('/api/users', name: 'user_profile_create', methods: ['POST'])]
@@ -207,31 +177,30 @@ final class UserProfileRestController
                 new OA\Property(property: 'email', type: 'string', example: 'jan@example.com'),
                 new OA\Property(property: 'displayName', type: 'string', example: 'Jan Kowalski'),
                 new OA\Property(property: 'bio', type: 'string', example: 'Lubię Symfony i DDD'),
-                new OA\Property(property: 'role', type: 'string', example: 'ROLE_USER'),
+                new OA\Property(
+                    property: 'role',
+                    type: 'string',
+                    enum: ['ROLE_USER', 'ROLE_MODERATOR', 'ROLE_ADMIN'],
+                    example: 'ROLE_USER',
+                ),
                 new OA\Property(property: 'password', type: 'string', example: 'secret123'),
             ],
         ),
     )]
     #[OA\Response(response: 201, description: 'Użytkownik utworzony')]
     #[OA\Response(response: 400, description: 'Błąd walidacji')]
-    public function create(Request $request): JsonResponse
+    public function create(JsonBody $body): JsonResponse
     {
-        $payload = $this->decodeJson($request);
-
-        if ($payload instanceof JsonResponse) {
-            return $payload;
-        }
-
         /** @var UserResponse $response */
         $response = $this->dispatcher->dispatchCommand(new CreateUserCommand(
-            email: $this->stringValue($payload, 'email'),
-            displayName: $this->stringValue($payload, 'displayName'),
-            bio: $this->optionalString($payload, 'bio'),
-            role: $this->optionalString($payload, 'role'),
-            password: $this->optionalString($payload, 'password'),
+            email: Email::fromString($body->string('email')),
+            displayName: DisplayName::fromString($body->string('displayName')),
+            bio: Bio::fromOptionalString($body->optionalString('bio'), $this->bioMaxLength),
+            role: UserRole::tryFromString($body->optionalString('role')),
+            password: PlainPassword::fromOptionalString($body->optionalString('password')),
         ));
 
-        return $this->userJsonResponse($response, Response::HTTP_CREATED);
+        return $this->json($response, Response::HTTP_CREATED);
     }
 
     #[Route('/api/users/{id}', name: 'user_profile_show', methods: ['GET'])]
@@ -243,12 +212,12 @@ final class UserProfileRestController
     #[OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'string', format: 'uuid'))]
     #[OA\Response(response: 200, description: 'Profil użytkownika')]
     #[OA\Response(response: 404, description: 'Użytkownik nie istnieje')]
-    public function show(string $id): JsonResponse
+    public function show(UserId $userId): JsonResponse
     {
         /** @var UserResponse $response */
-        $response = $this->dispatcher->dispatchQuery(new GetUserQuery($id));
+        $response = $this->dispatcher->dispatchQuery(new GetUserQuery($userId));
 
-        return $this->userJsonResponse($response, Response::HTTP_OK, notFound: true);
+        return $this->json($response, Response::HTTP_OK);
     }
 
     #[Route('/api/users/{id}/profile', name: 'user_profile_update', methods: ['PUT'])]
@@ -270,22 +239,16 @@ final class UserProfileRestController
     )]
     #[OA\Response(response: 200, description: 'Profil zaktualizowany')]
     #[OA\Response(response: 404, description: 'Użytkownik nie istnieje')]
-    public function updateProfile(Request $request, string $id): JsonResponse
+    public function updateProfile(JsonBody $body, UserId $userId): JsonResponse
     {
-        $payload = $this->decodeJson($request);
-
-        if ($payload instanceof JsonResponse) {
-            return $payload;
-        }
-
         /** @var UserResponse $response */
         $response = $this->dispatcher->dispatchCommand(new UpdateProfileCommand(
-            userId: $id,
-            bio: $this->stringValue($payload, 'bio'),
-            displayName: $this->optionalString($payload, 'displayName'),
+            userId: $userId,
+            bio: Bio::fromOptionalString($body->optionalString('bio'), $this->bioMaxLength),
+            displayName: DisplayName::fromOptionalString($body->optionalString('displayName')),
         ));
 
-        return $this->userJsonResponse($response, Response::HTTP_OK, notFound: true);
+        return $this->json($response, Response::HTTP_OK);
     }
 
     #[Route('/api/users/{id}/role', name: 'user_profile_assign_role', methods: ['PUT'])]
@@ -306,116 +269,19 @@ final class UserProfileRestController
     )]
     #[OA\Response(response: 200, description: 'Rola przypisana')]
     #[OA\Response(response: 404, description: 'Użytkownik nie istnieje')]
-    public function assignRole(Request $request, string $id): JsonResponse
+    public function assignRole(JsonBody $body, UserId $userId): JsonResponse
     {
-        $payload = $this->decodeJson($request);
-
-        if ($payload instanceof JsonResponse) {
-            return $payload;
-        }
-
         /** @var UserResponse $response */
         $response = $this->dispatcher->dispatchCommand(new AssignRoleCommand(
-            userId: $id,
-            role: $this->stringValue($payload, 'role'),
+            userId: $userId,
+            role: UserRole::fromString($body->string('role')),
         ));
 
-        return $this->userJsonResponse($response, Response::HTTP_OK, notFound: true);
+        return $this->json($response, Response::HTTP_OK);
     }
 
-    /**
-     * @return array<string, mixed>|JsonResponse
-     */
-    private function decodeJson(Request $request): array|JsonResponse
+    private function json(JsonHttpResponse $response, int $successCode): JsonResponse
     {
-        $content = $request->getContent();
-
-        if ('' === $content) {
-            return new JsonResponse(
-                UserResponse::error('JSON body is required.')->toArray(),
-                Response::HTTP_BAD_REQUEST,
-            );
-        }
-
-        try {
-            $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            return new JsonResponse(
-                UserResponse::error('JSON body is invalid.')->toArray(),
-                Response::HTTP_BAD_REQUEST,
-            );
-        }
-
-        if (!\is_array($decoded)) {
-            return new JsonResponse(
-                UserResponse::error('JSON body must be an object.')->toArray(),
-                Response::HTTP_BAD_REQUEST,
-            );
-        }
-
-        return $decoded;
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     */
-    private function stringValue(array $payload, string $key): string
-    {
-        $value = $payload[$key] ?? '';
-
-        return \is_string($value) ? $value : '';
-    }
-
-    /**
-     * @param array<string, mixed> $payload
-     */
-    private function optionalString(array $payload, string $key): ?string
-    {
-        if (!\array_key_exists($key, $payload) || null === $payload[$key]) {
-            return null;
-        }
-
-        return \is_string($payload[$key]) ? $payload[$key] : null;
-    }
-
-    private function userJsonResponse(UserResponse $response, int $successCode, bool $notFound = false): JsonResponse
-    {
-        if (OperationStatus::Success === $response->status) {
-            return new JsonResponse($response->toArray(), $successCode);
-        }
-
-        return new JsonResponse(
-            $response->toArray(),
-            $this->resolveErrorStatusCode($response->errorMessage ?? '', $notFound),
-        );
-    }
-
-    private function resolveErrorStatusCode(string $message, bool $notFound = false): int
-    {
-        if ($notFound && str_contains($message, 'not found')) {
-            return Response::HTTP_NOT_FOUND;
-        }
-
-        $clientErrorFragments = [
-            'cannot be empty',
-            'invalid format',
-            'is invalid',
-            'not allowed',
-            'must be between',
-            'must be at least',
-            'exceeds maximum',
-            'already exists',
-            'JSON body',
-            'must start with',
-            'was not found',
-        ];
-
-        foreach ($clientErrorFragments as $fragment) {
-            if (str_contains($message, $fragment)) {
-                return Response::HTTP_BAD_REQUEST;
-            }
-        }
-
-        return Response::HTTP_INTERNAL_SERVER_ERROR;
+        return new JsonResponse($response->toArray(), $response->httpStatus($successCode));
     }
 }

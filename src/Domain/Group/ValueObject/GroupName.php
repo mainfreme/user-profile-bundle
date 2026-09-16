@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\Group\ValueObject;
+namespace SWH\UserProfile\Domain\Group\ValueObject;
 
-use Mainfreme\UserProfile\Domain\Group\Exception\InvalidGroupNameException;
+use SWH\UserProfile\Domain\Group\Exception\InvalidGroupNameException;
 
 final readonly class GroupName
 {

@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Command\UpdateProfile;
+namespace SWH\UserProfile\Application\Command\UpdateProfile;
 
-use Mainfreme\UserProfile\Application\DTO\UserResponse;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
-use Mainfreme\UserProfile\Domain\User\Exception\UserNotFoundException;
-use Mainfreme\UserProfile\Domain\User\Port\UserRepositoryInterface;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Bio;
-use Mainfreme\UserProfile\Domain\User\ValueObject\DisplayName;
-use Mainfreme\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Application\DTO\UserResponse;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Exception\UserNotFoundException;
+use SWH\UserProfile\Domain\User\Port\UserRepositoryInterface;
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
 use Throwable;
 
 final class UpdateProfileHandler
@@ -24,24 +22,23 @@ final class UpdateProfileHandler
     public function __invoke(UpdateProfileCommand $command): UserResponse
     {
         try {
-            $userId = UserId::fromString($command->userId);
-            $user = $this->userRepository->findById($userId);
+            $user = $this->userRepository->findById($command->userId);
 
             if (null === $user) {
-                throw UserNotFoundException::forId($userId->toString());
+                throw UserNotFoundException::forId($command->userId);
             }
 
-            $bio = Bio::fromString($command->bio, $this->bioMaxLength);
-            $displayName = null !== $command->displayName && '' !== trim($command->displayName)
-                ? DisplayName::fromString($command->displayName)
-                : $user->displayName();
+            $bio = null !== $command->bio
+                ? Bio::fromString($command->bio->toString(), $this->bioMaxLength)
+                : $user->bio();
+            $displayName = $command->displayName ?? $user->displayName();
 
             $user->updateProfile($bio, $displayName);
             $this->userRepository->save($user);
 
             return UserResponse::success($user);
         } catch (UserDomainException $exception) {
-            return UserResponse::error($exception->getMessage());
+            return UserResponse::fromException($exception);
         } catch (Throwable) {
             return UserResponse::error('An unexpected error occurred while updating the profile.');
         }

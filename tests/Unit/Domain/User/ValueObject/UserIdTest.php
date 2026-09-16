@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Domain\User\ValueObject;
+namespace SWH\UserProfile\Tests\Unit\Domain\User\ValueObject;
 
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidUserIdException;
-use Mainfreme\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Domain\User\Exception\InvalidUserIdException;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
 use PHPUnit\Framework\TestCase;
 
 final class UserIdTest extends TestCase
@@ -27,10 +27,25 @@ final class UserIdTest extends TestCase
         self::assertSame('550e8400-e29b-41d4-a716-446655440000', $userId->toString());
     }
 
+    public function test_rejects_empty_value(): void
+    {
+        $this->expectException(InvalidUserIdException::class);
+
+        UserId::fromString('   ');
+    }
+
     public function test_rejects_invalid_format(): void
     {
         $this->expectException(InvalidUserIdException::class);
 
         UserId::fromString('not-a-uuid');
+    }
+
+    public function test_equals_same_uuid(): void
+    {
+        $userId = UserId::fromString('550e8400-e29b-41d4-a716-446655440000');
+        $same = UserId::fromString('550E8400-E29B-41D4-A716-446655440000');
+
+        self::assertTrue($userId->equals($same));
     }
 }

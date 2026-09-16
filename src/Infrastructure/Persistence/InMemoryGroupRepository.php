@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\Persistence;
+namespace SWH\UserProfile\Infrastructure\Persistence;
 
-use Mainfreme\UserProfile\Domain\Group\Model\Group;
-use Mainfreme\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupId;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupName;
+use SWH\UserProfile\Domain\Group\Model\Group;
+use SWH\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupId;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
 
 final class InMemoryGroupRepository implements GroupRepositoryInterface
 {

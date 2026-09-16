@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\Persistence;
+namespace SWH\UserProfile\Infrastructure\Persistence;
 
 use DateTimeImmutable;
-use Mainfreme\UserProfile\Domain\Group\Model\Group;
-use Mainfreme\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupId;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupName;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\Group\Model\Group;
+use SWH\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupId;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
 use RuntimeException;
 
 final class FilesystemGroupRepository implements GroupRepositoryInterface
@@ -32,12 +32,12 @@ final class FilesystemGroupRepository implements GroupRepositoryInterface
             'updatedAt' => $group->updatedAt()->format(\DATE_ATOM),
         ];
 
-        $this->writeJson($this->groupFile($group->id()->toString()), $payload);
+        $this->writeJson($this->groupFile($group->id()), $payload);
     }
 
     public function findById(GroupId $groupId): ?Group
     {
-        $path = $this->groupFile($groupId->toString());
+        $path = $this->groupFile($groupId);
 
         if (!is_file($path)) {
             return null;
@@ -132,9 +132,9 @@ final class FilesystemGroupRepository implements GroupRepositoryInterface
         }
     }
 
-    private function groupFile(string $groupId): string
+    private function groupFile(GroupId $groupId): string
     {
-        return $this->rootDirectory.'/'.$groupId.'.json';
+        return $this->rootDirectory.'/'.$groupId->toString().'.json';
     }
 
     private function ensureDirectory(): void

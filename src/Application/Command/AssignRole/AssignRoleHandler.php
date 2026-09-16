@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Command\AssignRole;
+namespace SWH\UserProfile\Application\Command\AssignRole;
 
-use Mainfreme\UserProfile\Application\DTO\UserResponse;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
-use Mainfreme\UserProfile\Domain\User\Exception\UserNotFoundException;
-use Mainfreme\UserProfile\Domain\User\Port\RoleCatalogInterface;
-use Mainfreme\UserProfile\Domain\User\Port\UserRepositoryInterface;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
-use Mainfreme\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Application\DTO\UserResponse;
+use SWH\UserProfile\Domain\User\Exception\InvalidRoleException;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Exception\UserNotFoundException;
+use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Domain\User\Port\UserRepositoryInterface;
 use Throwable;
 
 final class AssignRoleHandler
@@ -24,20 +23,24 @@ final class AssignRoleHandler
     public function __invoke(AssignRoleCommand $command): UserResponse
     {
         try {
-            $userId = UserId::fromString($command->userId);
-            $user = $this->userRepository->findById($userId);
+            $user = $this->userRepository->findById($command->userId);
 
             if (null === $user) {
-                throw UserNotFoundException::forId($userId->toString());
+                throw UserNotFoundException::forId($command->userId);
             }
 
-            $role = Role::fromString($command->role, $this->roleCatalog->tree()->flattenCodes());
-            $user->assignRole($role);
+            $allowedRoles = $this->roleCatalog->tree()->flattenCodes();
+            if (!\in_array($command->role->value, $allowedRoles, true)) {
+                throw InvalidRoleException::notAllowed($command->role->value, $allowedRoles);
+            }
+
+            $user->assignRole($command->role);
+
             $this->userRepository->save($user);
 
             return UserResponse::success($user);
         } catch (UserDomainException $exception) {
-            return UserResponse::error($exception->getMessage());
+            return UserResponse::fromException($exception);
         } catch (Throwable) {
             return UserResponse::error('An unexpected error occurred while assigning the role.');
         }

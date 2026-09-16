@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Domain\User\ValueObject;
+namespace SWH\UserProfile\Tests\Unit\Domain\User\ValueObject;
 
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidRoleException;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\Exception\InvalidRoleException;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
 use PHPUnit\Framework\TestCase;
 
 final class RoleTest extends TestCase

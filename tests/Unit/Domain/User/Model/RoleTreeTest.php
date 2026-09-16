@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Domain\User\Model;
+namespace SWH\UserProfile\Tests\Unit\Domain\User\Model;
 
 use InvalidArgumentException;
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidRoleException;
-use Mainfreme\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Domain\User\Exception\InvalidRoleException;
+use SWH\UserProfile\Domain\User\Model\RoleTree;
 use PHPUnit\Framework\TestCase;
 
 final class RoleTreeTest extends TestCase

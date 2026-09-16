@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Domain\User\ValueObject;
+namespace SWH\UserProfile\Tests\Unit\Domain\User\ValueObject;
 
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidDisplayNameException;
-use Mainfreme\UserProfile\Domain\User\ValueObject\DisplayName;
+use SWH\UserProfile\Domain\User\Exception\InvalidDisplayNameException;
+use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
 use PHPUnit\Framework\TestCase;
 
 final class DisplayNameTest extends TestCase

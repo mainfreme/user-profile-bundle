@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\Group\Exception;
+namespace SWH\UserProfile\Domain\Group\Exception;
 
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
 
 final class GroupAlreadyExistsException extends UserDomainException
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\Exception;
+namespace SWH\UserProfile\Domain\User\Exception;
 
 final class InvalidEmailException extends UserDomainException
 {

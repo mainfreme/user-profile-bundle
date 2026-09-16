@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\Enum;
+namespace SWH\UserProfile\Domain\User\Enum;
 
 enum OperationStatus: string
 {

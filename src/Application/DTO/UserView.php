@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\DTO;
+namespace SWH\UserProfile\Application\DTO;
 
-use Mainfreme\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\Model\User;
 
 final readonly class UserView
 {

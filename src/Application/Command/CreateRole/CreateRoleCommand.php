@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Command\CreateRole;
+namespace SWH\UserProfile\Application\Command\CreateRole;
 
 final readonly class CreateRoleCommand
 {

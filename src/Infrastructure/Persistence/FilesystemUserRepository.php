@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\Persistence;
+namespace SWH\UserProfile\Infrastructure\Persistence;
 
 use DateTimeImmutable;
-use Mainfreme\UserProfile\Domain\User\Model\User;
-use Mainfreme\UserProfile\Domain\User\Port\UserRepositoryInterface;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Bio;
-use Mainfreme\UserProfile\Domain\User\ValueObject\DisplayName;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Email;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
-use Mainfreme\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Domain\User\Enum\UserRole;
+use SWH\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\Port\UserRepositoryInterface;
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
+use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
+use SWH\UserProfile\Domain\User\ValueObject\Email;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
 use RuntimeException;
 
 final class FilesystemUserRepository implements UserRepositoryInterface
@@ -38,7 +38,7 @@ final class FilesystemUserRepository implements UserRepositoryInterface
             'updatedAt' => $user->updatedAt()->format(\DATE_ATOM),
         ];
 
-        $this->writeJson($this->userFile($user->id()->toString()), $payload);
+        $this->writeJson($this->userFile($user->id()), $payload);
 
         $index = $this->readIndex();
         $index[$user->email()->toString()] = $user->id()->toString();
@@ -47,7 +47,7 @@ final class FilesystemUserRepository implements UserRepositoryInterface
 
     public function findById(UserId $userId): ?User
     {
-        $path = $this->userFile($userId->toString());
+        $path = $this->userFile($userId);
 
         if (!is_file($path)) {
             return null;
@@ -109,7 +109,7 @@ final class FilesystemUserRepository implements UserRepositoryInterface
             email: Email::fromString((string) $data['email']),
             displayName: DisplayName::fromString((string) $data['displayName']),
             bio: Bio::fromString((string) $data['bio'], 1_000_000),
-            role: Role::restore((string) $data['role']),
+            role: UserRole::fromString((string) $data['role']),
             passwordHash: isset($data['passwordHash']) && \is_string($data['passwordHash']) ? $data['passwordHash'] : null,
             createdAt: $createdAt,
             updatedAt: $updatedAt,
@@ -168,9 +168,9 @@ final class FilesystemUserRepository implements UserRepositoryInterface
         }
     }
 
-    private function userFile(string $userId): string
+    private function userFile(UserId $userId): string
     {
-        return $this->rootDirectory.'/'.$userId.'.json';
+        return $this->rootDirectory.'/'.$userId->toString().'.json';
     }
 
     private function indexFile(): string

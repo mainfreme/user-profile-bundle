@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\ValueObject;
+namespace SWH\UserProfile\Domain\User\ValueObject;
 
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidDisplayNameException;
+use SWH\UserProfile\Domain\User\Exception\InvalidDisplayNameException;
 
 final readonly class DisplayName
 {
@@ -31,6 +31,15 @@ final readonly class DisplayName
         }
 
         return new self($trimmed);
+    }
+
+    public static function fromOptionalString(?string $value): ?self
+    {
+        if (null === $value || '' === trim($value)) {
+            return null;
+        }
+
+        return self::fromString($value);
     }
 
     public function toString(): string

@@ -2,17 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Application\Command;
+namespace SWH\UserProfile\Tests\Unit\Application\Command;
 
-use Mainfreme\UserProfile\Application\Command\UpdateProfile\UpdateProfileCommand;
-use Mainfreme\UserProfile\Application\Command\UpdateProfile\UpdateProfileHandler;
-use Mainfreme\UserProfile\Domain\User\Enum\OperationStatus;
-use Mainfreme\UserProfile\Domain\User\Model\User;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Bio;
-use Mainfreme\UserProfile\Domain\User\ValueObject\DisplayName;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Email;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
-use Mainfreme\UserProfile\Infrastructure\Persistence\InMemoryUserRepository;
+use SWH\UserProfile\Application\Command\UpdateProfile\UpdateProfileCommand;
+use SWH\UserProfile\Application\Command\UpdateProfile\UpdateProfileHandler;
+use SWH\UserProfile\Domain\User\Enum\OperationStatus;
+use SWH\UserProfile\Domain\User\Enum\UserRole;
+use SWH\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\ValueObject\Bio;
+use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
+use SWH\UserProfile\Domain\User\ValueObject\Email;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Infrastructure\Persistence\InMemoryUserRepository;
 use PHPUnit\Framework\TestCase;
 
 final class UpdateProfileHandlerTest extends TestCase
@@ -25,9 +26,9 @@ final class UpdateProfileHandlerTest extends TestCase
 
         $handler = new UpdateProfileHandler($repository, 2000);
         $response = $handler(new UpdateProfileCommand(
-            userId: $user->id()->toString(),
-            bio: 'Nowe bio',
-            displayName: 'Jan Nowak',
+            userId: $user->id(),
+            bio: Bio::fromString('Nowe bio', 2000),
+            displayName: DisplayName::fromString('Jan Nowak'),
         ));
 
         self::assertSame(OperationStatus::Success, $response->status);
@@ -40,8 +41,8 @@ final class UpdateProfileHandlerTest extends TestCase
     {
         $handler = new UpdateProfileHandler(new InMemoryUserRepository(), 2000);
         $response = $handler(new UpdateProfileCommand(
-            userId: '550e8400-e29b-41d4-a716-446655440000',
-            bio: 'Bio',
+            userId: UserId::fromString('550e8400-e29b-41d4-a716-446655440000'),
+            bio: Bio::fromString('Bio', 2000),
         ));
 
         self::assertSame(OperationStatus::Error, $response->status);
@@ -53,7 +54,7 @@ final class UpdateProfileHandlerTest extends TestCase
         return User::register(
             email: Email::fromString('jan@example.com'),
             displayName: DisplayName::fromString('Jan Kowalski'),
-            role: Role::fromString('ROLE_USER', ['ROLE_USER']),
+            role: UserRole::User,
             bio: Bio::fromString('Stare bio', 2000),
         );
     }

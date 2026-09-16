@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\OpenApi;
+namespace SWH\UserProfile\Infrastructure\OpenApi;
 
 use OpenApi\Attributes as OA;
 

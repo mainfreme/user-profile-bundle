@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Query\GetRoleTree;
+namespace SWH\UserProfile\Application\Query\GetRoleTree;
 
-use Mainfreme\UserProfile\Application\DTO\RoleTreeResponse;
-use Mainfreme\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Application\DTO\RoleTreeResponse;
+use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
 use Throwable;
 
 final class GetRoleTreeHandler

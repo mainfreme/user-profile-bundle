@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\Persistence;
+namespace SWH\UserProfile\Infrastructure\Persistence;
 
-use Mainfreme\UserProfile\Domain\User\Model\User;
-use Mainfreme\UserProfile\Domain\User\Port\UserRepositoryInterface;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Email;
-use Mainfreme\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\Port\UserRepositoryInterface;
+use SWH\UserProfile\Domain\User\ValueObject\Email;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
 
 final class InMemoryUserRepository implements UserRepositoryInterface
 {

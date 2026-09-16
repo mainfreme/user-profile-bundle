@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Query\ListGroups;
+namespace SWH\UserProfile\Application\Query\ListGroups;
 
-use Mainfreme\UserProfile\Application\DTO\GroupListResponse;
-use Mainfreme\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Application\DTO\GroupListResponse;
+use SWH\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
 use Throwable;
 
 final class ListGroupsHandler
@@ -21,7 +21,7 @@ final class ListGroupsHandler
         try {
             return GroupListResponse::success($this->groupRepository->findAll());
         } catch (UserDomainException $exception) {
-            return GroupListResponse::error($exception->getMessage());
+            return GroupListResponse::fromException($exception);
         } catch (Throwable) {
             return GroupListResponse::error('An unexpected error occurred while listing groups.');
         }

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\DependencyInjection;
+namespace SWH\UserProfile\DependencyInjection;
 
-use Mainfreme\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Domain\User\Model\RoleTree;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 

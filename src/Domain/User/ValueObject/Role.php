@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\ValueObject;
+namespace SWH\UserProfile\Domain\User\ValueObject;
 
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidRoleException;
+use SWH\UserProfile\Domain\User\Exception\InvalidRoleException;
 
 final readonly class Role
 {

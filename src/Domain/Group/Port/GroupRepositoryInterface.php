@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\Group\Port;
+namespace SWH\UserProfile\Domain\Group\Port;
 
-use Mainfreme\UserProfile\Domain\Group\Model\Group;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupId;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupName;
+use SWH\UserProfile\Domain\Group\Model\Group;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupId;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
 
 interface GroupRepositoryInterface
 {

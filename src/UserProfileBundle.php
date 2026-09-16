@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile;
+namespace SWH\UserProfile;
 
 use Nelmio\ApiDocBundle\NelmioApiDocBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

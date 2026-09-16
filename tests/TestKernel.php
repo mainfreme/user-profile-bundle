@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests;
+namespace SWH\UserProfile\Tests;
 
-use Mainfreme\UserProfile\UserProfileBundle;
+use SWH\UserProfile\UserProfileBundle;
 use Nelmio\ApiDocBundle\NelmioApiDocBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;

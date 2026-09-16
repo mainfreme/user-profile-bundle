@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Functional;
+namespace SWH\UserProfile\Tests\Functional;
 
-use Mainfreme\UserProfile\Tests\TestKernel;
+use SWH\UserProfile\Tests\TestKernel;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

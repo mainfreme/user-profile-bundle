@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\Port;
+namespace SWH\UserProfile\Domain\User\Port;
 
 interface PasswordHasherInterface
 {

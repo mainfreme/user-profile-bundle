@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Service;
+namespace SWH\UserProfile\Application\Service;
 
 use RuntimeException;
 use Symfony\Component\Messenger\MessageBusInterface;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\Model;
+namespace SWH\UserProfile\Domain\User\Model;
 
 use InvalidArgumentException;
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidRoleException;
+use SWH\UserProfile\Domain\User\Exception\InvalidRoleException;
 
 final readonly class RoleTree
 {

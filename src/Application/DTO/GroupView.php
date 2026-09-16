@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\DTO;
+namespace SWH\UserProfile\Application\DTO;
 
-use Mainfreme\UserProfile\Domain\Group\Model\Group;
+use SWH\UserProfile\Domain\Group\Model\Group;
 
 final readonly class GroupView
 {

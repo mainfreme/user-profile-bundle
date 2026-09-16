@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\Port;
+namespace SWH\UserProfile\Domain\User\Port;
 
-use Mainfreme\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Domain\User\Model\RoleTree;
 
 interface RoleCatalogInterface
 {

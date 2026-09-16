@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\DTO;
+namespace SWH\UserProfile\Application\DTO;
 
-use Mainfreme\UserProfile\Domain\Group\Model\Group;
-use Mainfreme\UserProfile\Domain\User\Enum\OperationStatus;
+use SWH\UserProfile\Domain\Group\Model\Group;
+use SWH\UserProfile\Domain\User\Enum\OperationStatus;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Exception\UserNotFoundException;
 
-final readonly class GroupListResponse
+final readonly class GroupListResponse implements JsonHttpResponse
 {
     /**
      * @param list<GroupView> $groups
@@ -16,6 +18,7 @@ final readonly class GroupListResponse
         public OperationStatus $status,
         public ?string $errorMessage,
         public array $groups,
+        public int $errorStatus = 500,
     ) {
     }
 
@@ -31,6 +34,11 @@ final readonly class GroupListResponse
         ];
     }
 
+    public function httpStatus(int $successCode): int
+    {
+        return OperationStatus::Success === $this->status ? $successCode : $this->errorStatus;
+    }
+
     /**
      * @param list<Group> $groups
      */
@@ -43,8 +51,16 @@ final readonly class GroupListResponse
         );
     }
 
-    public static function error(string $errorMessage): self
+    public static function error(string $errorMessage, int $errorStatus = 500): self
     {
-        return new self(OperationStatus::Error, $errorMessage, []);
+        return new self(OperationStatus::Error, $errorMessage, [], $errorStatus);
+    }
+
+    public static function fromException(UserDomainException $exception): self
+    {
+        return self::error(
+            $exception->getMessage(),
+            $exception instanceof UserNotFoundException ? 404 : 400,
+        );
     }
 }

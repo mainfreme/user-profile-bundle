@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Application\Command;
+namespace SWH\UserProfile\Tests\Unit\Application\Command;
 
-use Mainfreme\UserProfile\Application\Command\CreateRole\CreateRoleCommand;
-use Mainfreme\UserProfile\Application\Command\CreateRole\CreateRoleHandler;
-use Mainfreme\UserProfile\Domain\User\Enum\OperationStatus;
-use Mainfreme\UserProfile\Domain\User\Model\RoleTree;
-use Mainfreme\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog;
+use SWH\UserProfile\Application\Command\CreateRole\CreateRoleCommand;
+use SWH\UserProfile\Application\Command\CreateRole\CreateRoleHandler;
+use SWH\UserProfile\Domain\User\Enum\OperationStatus;
+use SWH\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog;
 use PHPUnit\Framework\TestCase;
 
 final class CreateRoleHandlerTest extends TestCase

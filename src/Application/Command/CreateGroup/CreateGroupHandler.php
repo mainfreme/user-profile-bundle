@@ -2,16 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Command\CreateGroup;
+namespace SWH\UserProfile\Application\Command\CreateGroup;
 
-use Mainfreme\UserProfile\Application\DTO\GroupResponse;
-use Mainfreme\UserProfile\Domain\Group\Exception\GroupAlreadyExistsException;
-use Mainfreme\UserProfile\Domain\Group\Model\Group;
-use Mainfreme\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
-use Mainfreme\UserProfile\Domain\Group\ValueObject\GroupName;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
-use Mainfreme\UserProfile\Domain\User\Port\RoleCatalogInterface;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Application\DTO\GroupResponse;
+use SWH\UserProfile\Domain\Group\Exception\GroupAlreadyExistsException;
+use SWH\UserProfile\Domain\Group\Model\Group;
+use SWH\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
 use Throwable;
 
 final class CreateGroupHandler
@@ -25,19 +24,18 @@ final class CreateGroupHandler
     public function __invoke(CreateGroupCommand $command): GroupResponse
     {
         try {
-            $name = GroupName::fromString($command->name);
 
-            if (null !== $this->groupRepository->findByName($name)) {
-                throw GroupAlreadyExistsException::forName($name->toString());
+            if (null !== $this->groupRepository->findByName($command->name)) {
+                throw GroupAlreadyExistsException::forName($command->name->toString());
             }
 
             $role = null;
-            if (null !== $command->role && '' !== trim($command->role)) {
-                $role = Role::fromString($command->role, $this->roleCatalog->tree()->flattenCodes());
+            if (null !== $command->role) {
+                $role = Role::fromString($command->role->value, $this->roleCatalog->tree()->flattenCodes());
             }
 
             $group = Group::create(
-                name: $name,
+                name: $command->name,
                 description: $command->description ?? '',
                 role: $role,
             );
@@ -46,7 +44,7 @@ final class CreateGroupHandler
 
             return GroupResponse::success($group);
         } catch (UserDomainException $exception) {
-            return GroupResponse::error($exception->getMessage());
+            return GroupResponse::fromException($exception);
         } catch (Throwable) {
             return GroupResponse::error('An unexpected error occurred while creating the group.');
         }

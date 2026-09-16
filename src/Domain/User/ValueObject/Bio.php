@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\ValueObject;
+namespace SWH\UserProfile\Domain\User\ValueObject;
 
-use Mainfreme\UserProfile\Domain\User\Exception\InvalidBioException;
+use SWH\UserProfile\Domain\User\Exception\InvalidBioException;
 
 final readonly class Bio
 {
@@ -27,6 +27,15 @@ final readonly class Bio
         }
 
         return new self($trimmed);
+    }
+
+    public static function fromOptionalString(?string $value, int $maxLength): ?self
+    {
+        if (null === $value || '' === trim($value)) {
+            return null;
+        }
+
+        return self::fromString($value, $maxLength);
     }
 
     public function toString(): string

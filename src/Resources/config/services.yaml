@@ -4,18 +4,31 @@ services:
         autoconfigure: true
         public: false
 
-    Mainfreme\UserProfile\:
+    SWH\UserProfile\:
         resource: '../../'
         exclude:
             - '../../DependencyInjection/'
             - '../../UserProfileBundle.php'
             - '../../Infrastructure/OpenApi/'
             - '../../Domain/User/Model/RoleTree.php'
+            - '../../Domain/ValueObject/'
+            - '../../Infrastructure/Http/Request/'
+            - '../../Infrastructure/Http/Exception/'
 
-    Mainfreme\UserProfile\Infrastructure\Http\Controller\UserProfileRestController:
+    SWH\UserProfile\Infrastructure\Http\Controller\UserProfileRestController:
+        arguments:
+            $bioMaxLength: '%user_profile.bio_max_length%'
         tags: ['controller.service_arguments']
 
-    Mainfreme\UserProfile\Application\Service\MessageBusDispatcher:
+    SWH\UserProfile\Infrastructure\Http\ArgumentResolver\UserIdValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 150 }
+
+    SWH\UserProfile\Infrastructure\Http\ArgumentResolver\JsonBodyValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 150 }
+
+    SWH\UserProfile\Application\Service\MessageBusDispatcher:
         arguments:
             $commandBus: '@user_profile.command.bus'
             $queryBus: '@user_profile.query.bus'
@@ -48,43 +61,43 @@ services:
         class: Symfony\Component\Messenger\Handler\HandlersLocator
         arguments:
             -
-                'Mainfreme\UserProfile\Application\Command\CreateUser\CreateUserCommand':
-                    - '@Mainfreme\UserProfile\Application\Command\CreateUser\CreateUserHandler'
-                'Mainfreme\UserProfile\Application\Command\UpdateProfile\UpdateProfileCommand':
-                    - '@Mainfreme\UserProfile\Application\Command\UpdateProfile\UpdateProfileHandler'
-                'Mainfreme\UserProfile\Application\Command\AssignRole\AssignRoleCommand':
-                    - '@Mainfreme\UserProfile\Application\Command\AssignRole\AssignRoleHandler'
-                'Mainfreme\UserProfile\Application\Command\CreateRole\CreateRoleCommand':
-                    - '@Mainfreme\UserProfile\Application\Command\CreateRole\CreateRoleHandler'
-                'Mainfreme\UserProfile\Application\Command\CreateGroup\CreateGroupCommand':
-                    - '@Mainfreme\UserProfile\Application\Command\CreateGroup\CreateGroupHandler'
+                'SWH\UserProfile\Application\Command\CreateUser\CreateUserCommand':
+                    - '@SWH\UserProfile\Application\Command\CreateUser\CreateUserHandler'
+                'SWH\UserProfile\Application\Command\UpdateProfile\UpdateProfileCommand':
+                    - '@SWH\UserProfile\Application\Command\UpdateProfile\UpdateProfileHandler'
+                'SWH\UserProfile\Application\Command\AssignRole\AssignRoleCommand':
+                    - '@SWH\UserProfile\Application\Command\AssignRole\AssignRoleHandler'
+                'SWH\UserProfile\Application\Command\CreateRole\CreateRoleCommand':
+                    - '@SWH\UserProfile\Application\Command\CreateRole\CreateRoleHandler'
+                'SWH\UserProfile\Application\Command\CreateGroup\CreateGroupCommand':
+                    - '@SWH\UserProfile\Application\Command\CreateGroup\CreateGroupHandler'
 
     user_profile.query.handler_locator:
         class: Symfony\Component\Messenger\Handler\HandlersLocator
         arguments:
             -
-                'Mainfreme\UserProfile\Application\Query\GetUser\GetUserQuery':
-                    - '@Mainfreme\UserProfile\Application\Query\GetUser\GetUserHandler'
-                'Mainfreme\UserProfile\Application\Query\ListUsers\ListUsersQuery':
-                    - '@Mainfreme\UserProfile\Application\Query\ListUsers\ListUsersHandler'
-                'Mainfreme\UserProfile\Application\Query\GetRoleTree\GetRoleTreeQuery':
-                    - '@Mainfreme\UserProfile\Application\Query\GetRoleTree\GetRoleTreeHandler'
-                'Mainfreme\UserProfile\Application\Query\ListGroups\ListGroupsQuery':
-                    - '@Mainfreme\UserProfile\Application\Query\ListGroups\ListGroupsHandler'
+                'SWH\UserProfile\Application\Query\GetUser\GetUserQuery':
+                    - '@SWH\UserProfile\Application\Query\GetUser\GetUserHandler'
+                'SWH\UserProfile\Application\Query\ListUsers\ListUsersQuery':
+                    - '@SWH\UserProfile\Application\Query\ListUsers\ListUsersHandler'
+                'SWH\UserProfile\Application\Query\GetRoleTree\GetRoleTreeQuery':
+                    - '@SWH\UserProfile\Application\Query\GetRoleTree\GetRoleTreeHandler'
+                'SWH\UserProfile\Application\Query\ListGroups\ListGroupsQuery':
+                    - '@SWH\UserProfile\Application\Query\ListGroups\ListGroupsHandler'
 
-    Mainfreme\UserProfile\Infrastructure\Persistence\FilesystemUserRepository:
+    SWH\UserProfile\Infrastructure\Persistence\FilesystemUserRepository:
         arguments:
             $rootDirectory: '%user_profile.storage.filesystem.root%'
 
-    Mainfreme\UserProfile\Infrastructure\Persistence\FilesystemRoleCatalog:
+    SWH\UserProfile\Infrastructure\Persistence\FilesystemRoleCatalog:
         arguments:
             $rootDirectory: '%user_profile.storage.filesystem.root%'
             $seedConfig: '%user_profile.role_tree%'
 
-    Mainfreme\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog:
+    SWH\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog:
         arguments:
             $seed: '%user_profile.role_tree%'
 
-    Mainfreme\UserProfile\Infrastructure\Persistence\FilesystemGroupRepository:
+    SWH\UserProfile\Infrastructure\Persistence\FilesystemGroupRepository:
         arguments:
             $rootDirectory: '%user_profile.storage.filesystem.root%/groups'

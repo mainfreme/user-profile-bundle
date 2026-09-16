@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\DTO;
+namespace SWH\UserProfile\Application\DTO;
 
-use Mainfreme\UserProfile\Domain\User\Enum\OperationStatus;
-use Mainfreme\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\Enum\OperationStatus;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Exception\UserNotFoundException;
+use SWH\UserProfile\Domain\User\Model\User;
 
-final readonly class UserListResponse
+final readonly class UserListResponse implements JsonHttpResponse
 {
     /**
      * @param list<UserView> $users
@@ -16,6 +18,7 @@ final readonly class UserListResponse
         public OperationStatus $status,
         public ?string $errorMessage,
         public array $users,
+        public int $errorStatus = 500,
     ) {
     }
 
@@ -31,6 +34,11 @@ final readonly class UserListResponse
         ];
     }
 
+    public function httpStatus(int $successCode): int
+    {
+        return OperationStatus::Success === $this->status ? $successCode : $this->errorStatus;
+    }
+
     /**
      * @param list<User> $users
      */
@@ -43,8 +51,16 @@ final readonly class UserListResponse
         );
     }
 
-    public static function error(string $errorMessage): self
+    public static function error(string $errorMessage, int $errorStatus = 500): self
     {
-        return new self(OperationStatus::Error, $errorMessage, []);
+        return new self(OperationStatus::Error, $errorMessage, [], $errorStatus);
+    }
+
+    public static function fromException(UserDomainException $exception): self
+    {
+        return self::error(
+            $exception->getMessage(),
+            $exception instanceof UserNotFoundException ? 404 : 400,
+        );
     }
 }

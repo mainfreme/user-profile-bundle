@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Query\ListUsers;
+namespace SWH\UserProfile\Application\Query\ListUsers;
 
-use Mainfreme\UserProfile\Application\DTO\UserListResponse;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
-use Mainfreme\UserProfile\Domain\User\Port\UserRepositoryInterface;
+use SWH\UserProfile\Application\DTO\UserListResponse;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Port\UserRepositoryInterface;
 use Throwable;
 
 final class ListUsersHandler
@@ -19,13 +19,9 @@ final class ListUsersHandler
     public function __invoke(ListUsersQuery $query): UserListResponse
     {
         try {
-            $role = null !== $query->role && '' !== trim($query->role)
-                ? strtoupper(trim($query->role))
-                : null;
-
-            return UserListResponse::success($this->userRepository->findAll($role));
+            return UserListResponse::success($this->userRepository->findAll($query->role?->value));
         } catch (UserDomainException $exception) {
-            return UserListResponse::error($exception->getMessage());
+            return UserListResponse::fromException($exception);
         } catch (Throwable) {
             return UserListResponse::error('An unexpected error occurred while listing users.');
         }

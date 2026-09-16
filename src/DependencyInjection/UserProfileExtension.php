@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\DependencyInjection;
+namespace SWH\UserProfile\DependencyInjection;
 
 use InvalidArgumentException;
-use Mainfreme\UserProfile\Application\Command\CreateUser\CreateUserHandler;
-use Mainfreme\UserProfile\Application\Command\UpdateProfile\UpdateProfileHandler;
-use Mainfreme\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
-use Mainfreme\UserProfile\Domain\User\Model\RoleTree;
-use Mainfreme\UserProfile\Domain\User\Port\PasswordHasherInterface;
-use Mainfreme\UserProfile\Domain\User\Port\RoleCatalogInterface;
-use Mainfreme\UserProfile\Domain\User\Port\UserRepositoryInterface;
-use Mainfreme\UserProfile\Infrastructure\Persistence\FilesystemGroupRepository;
-use Mainfreme\UserProfile\Infrastructure\Persistence\FilesystemRoleCatalog;
-use Mainfreme\UserProfile\Infrastructure\Persistence\FilesystemUserRepository;
-use Mainfreme\UserProfile\Infrastructure\Persistence\InMemoryGroupRepository;
-use Mainfreme\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog;
-use Mainfreme\UserProfile\Infrastructure\Persistence\InMemoryUserRepository;
-use Mainfreme\UserProfile\Infrastructure\Security\NativePasswordHasher;
+use SWH\UserProfile\Application\Command\CreateUser\CreateUserHandler;
+use SWH\UserProfile\Application\Command\UpdateProfile\UpdateProfileHandler;
+use SWH\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Domain\User\Port\PasswordHasherInterface;
+use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Domain\User\Port\UserRepositoryInterface;
+use SWH\UserProfile\Infrastructure\Persistence\FilesystemGroupRepository;
+use SWH\UserProfile\Infrastructure\Persistence\FilesystemRoleCatalog;
+use SWH\UserProfile\Infrastructure\Persistence\FilesystemUserRepository;
+use SWH\UserProfile\Infrastructure\Persistence\InMemoryGroupRepository;
+use SWH\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog;
+use SWH\UserProfile\Infrastructure\Persistence\InMemoryUserRepository;
+use SWH\UserProfile\Infrastructure\Security\NativePasswordHasher;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

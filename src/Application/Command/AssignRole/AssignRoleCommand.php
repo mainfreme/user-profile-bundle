@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Command\AssignRole;
+namespace SWH\UserProfile\Application\Command\AssignRole;
+
+use SWH\UserProfile\Domain\User\Enum\UserRole;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
 
 final readonly class AssignRoleCommand
 {
     public function __construct(
-        public string $userId,
-        public string $role,
+        public UserId $userId,
+        public UserRole $role,
     ) {
     }
 }

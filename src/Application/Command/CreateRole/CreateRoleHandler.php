@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Application\Command\CreateRole;
+namespace SWH\UserProfile\Application\Command\CreateRole;
 
-use Mainfreme\UserProfile\Application\DTO\RoleTreeResponse;
-use Mainfreme\UserProfile\Domain\User\Exception\UserDomainException;
-use Mainfreme\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Application\DTO\RoleTreeResponse;
+use SWH\UserProfile\Domain\User\Exception\UserDomainException;
+use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
 use Throwable;
 
 final class CreateRoleHandler
@@ -23,7 +23,7 @@ final class CreateRoleHandler
 
             return RoleTreeResponse::success($tree);
         } catch (UserDomainException $exception) {
-            return RoleTreeResponse::error($exception->getMessage());
+            return RoleTreeResponse::fromException($exception);
         } catch (Throwable) {
             return RoleTreeResponse::error('An unexpected error occurred while creating the role.');
         }

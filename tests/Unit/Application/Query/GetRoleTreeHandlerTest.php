@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Tests\Unit\Application\Query;
+namespace SWH\UserProfile\Tests\Unit\Application\Query;
 
-use Mainfreme\UserProfile\Application\Query\GetRoleTree\GetRoleTreeHandler;
-use Mainfreme\UserProfile\Application\Query\GetRoleTree\GetRoleTreeQuery;
-use Mainfreme\UserProfile\Domain\User\Enum\OperationStatus;
-use Mainfreme\UserProfile\Domain\User\Model\RoleTree;
-use Mainfreme\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog;
+use SWH\UserProfile\Application\Query\GetRoleTree\GetRoleTreeHandler;
+use SWH\UserProfile\Application\Query\GetRoleTree\GetRoleTreeQuery;
+use SWH\UserProfile\Domain\User\Enum\OperationStatus;
+use SWH\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Infrastructure\Persistence\InMemoryRoleCatalog;
 use PHPUnit\Framework\TestCase;
 
 final class GetRoleTreeHandlerTest extends TestCase

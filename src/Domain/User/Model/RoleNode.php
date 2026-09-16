@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\Model;
+namespace SWH\UserProfile\Domain\User\Model;
 
 final readonly class RoleNode
 {

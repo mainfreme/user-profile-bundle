@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Domain\User\Port;
+namespace SWH\UserProfile\Domain\User\Port;
 
-use Mainfreme\UserProfile\Domain\User\Model\User;
-use Mainfreme\UserProfile\Domain\User\ValueObject\Email;
-use Mainfreme\UserProfile\Domain\User\ValueObject\UserId;
+use SWH\UserProfile\Domain\User\Model\User;
+use SWH\UserProfile\Domain\User\ValueObject\Email;
+use SWH\UserProfile\Domain\User\ValueObject\UserId;
 
 interface UserRepositoryInterface
 {

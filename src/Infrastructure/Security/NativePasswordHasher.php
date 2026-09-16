@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Mainfreme\UserProfile\Infrastructure\Security;
+namespace SWH\UserProfile\Infrastructure\Security;
 
-use Mainfreme\UserProfile\Domain\User\Port\PasswordHasherInterface;
+use SWH\UserProfile\Domain\User\Port\PasswordHasherInterface;
 
 final class NativePasswordHasher implements PasswordHasherInterface
 {
