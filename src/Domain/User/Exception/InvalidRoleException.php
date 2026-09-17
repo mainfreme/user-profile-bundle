@@ -42,4 +42,9 @@ final class InvalidRoleException extends UserDomainException
     {
         return new self('Role label cannot be empty.');
     }
+
+    public static function labelTooLong(int $maxLength): self
+    {
+        return new self(\sprintf('Role label exceeds maximum allowed length of %d characters.', $maxLength));
+    }
 }

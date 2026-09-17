@@ -6,6 +6,7 @@ namespace SWH\UserProfile\Tests\Unit\Application\Command;
 
 use SWH\UserProfile\Application\Command\CreateGroup\CreateGroupCommand;
 use SWH\UserProfile\Application\Command\CreateGroup\CreateGroupHandler;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupDescription;
 use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
 use SWH\UserProfile\Domain\User\Enum\OperationStatus;
 use SWH\UserProfile\Domain\User\Enum\UserRole;
@@ -25,7 +26,7 @@ final class CreateGroupHandlerTest extends TestCase
 
         $response = $handler(new CreateGroupCommand(
             GroupName::fromString('Redakcja'),
-            'Zespół redakcyjny',
+            GroupDescription::fromString('Zespół redakcyjny'),
             UserRole::Moderator,
         ));
 

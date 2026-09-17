@@ -23,7 +23,7 @@ final readonly class GroupView
         return new self(
             $group->id()->toString(),
             $group->name()->toString(),
-            $group->description(),
+            $group->description()->toString(),
             $group->role()?->toString(),
             $group->createdAt()->format(\DATE_ATOM),
             $group->updatedAt()->format(\DATE_ATOM),

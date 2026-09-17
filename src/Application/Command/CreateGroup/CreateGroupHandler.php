@@ -8,6 +8,7 @@ use SWH\UserProfile\Application\DTO\GroupResponse;
 use SWH\UserProfile\Domain\Group\Exception\GroupAlreadyExistsException;
 use SWH\UserProfile\Domain\Group\Model\Group;
 use SWH\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupDescription;
 use SWH\UserProfile\Domain\User\Exception\UserDomainException;
 use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
 use SWH\UserProfile\Domain\User\ValueObject\Role;
@@ -36,7 +37,7 @@ final class CreateGroupHandler
 
             $group = Group::create(
                 name: $command->name,
-                description: $command->description ?? '',
+                description: $command->description ?? GroupDescription::empty(),
                 role: $role,
             );
 

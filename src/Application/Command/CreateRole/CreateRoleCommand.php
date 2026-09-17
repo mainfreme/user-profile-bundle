@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace SWH\UserProfile\Application\Command\CreateRole;
 
+use SWH\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\ValueObject\RoleLabel;
+
 final readonly class CreateRoleCommand
 {
     public function __construct(
-        public string $role,
-        public string $label,
-        public ?string $parentRole = null,
+        public Role $role,
+        public RoleLabel $label,
+        public ?Role $parentRole = null,
     ) {
     }
 }

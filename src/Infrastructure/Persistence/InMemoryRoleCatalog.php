@@ -6,6 +6,8 @@ namespace SWH\UserProfile\Infrastructure\Persistence;
 
 use SWH\UserProfile\Domain\User\Model\RoleTree;
 use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\ValueObject\RoleLabel;
 
 final class InMemoryRoleCatalog implements RoleCatalogInterface
 {
@@ -24,7 +26,7 @@ final class InMemoryRoleCatalog implements RoleCatalogInterface
         return $this->tree;
     }
 
-    public function add(string $role, string $label, ?string $parentRole): RoleTree
+    public function add(Role $role, RoleLabel $label, ?Role $parentRole): RoleTree
     {
         $this->tree = $this->tree->withAddedNode($role, $label, $parentRole);
 

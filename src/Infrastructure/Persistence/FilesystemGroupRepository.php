@@ -7,6 +7,7 @@ namespace SWH\UserProfile\Infrastructure\Persistence;
 use DateTimeImmutable;
 use SWH\UserProfile\Domain\Group\Model\Group;
 use SWH\UserProfile\Domain\Group\Port\GroupRepositoryInterface;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupDescription;
 use SWH\UserProfile\Domain\Group\ValueObject\GroupId;
 use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
 use SWH\UserProfile\Domain\User\ValueObject\Role;
@@ -26,7 +27,7 @@ final class FilesystemGroupRepository implements GroupRepositoryInterface
         $payload = [
             'id' => $group->id()->toString(),
             'name' => $group->name()->toString(),
-            'description' => $group->description(),
+            'description' => $group->description()->toString(),
             'role' => $group->role()?->toString(),
             'createdAt' => $group->createdAt()->format(\DATE_ATOM),
             'updatedAt' => $group->updatedAt()->format(\DATE_ATOM),
@@ -88,7 +89,7 @@ final class FilesystemGroupRepository implements GroupRepositoryInterface
         return Group::restore(
             id: GroupId::fromString((string) $data['id']),
             name: GroupName::fromString((string) $data['name']),
-            description: (string) ($data['description'] ?? ''),
+            description: GroupDescription::fromString((string) ($data['description'] ?? '')),
             role: \is_string($roleValue) && '' !== $roleValue ? Role::restore($roleValue) : null,
             createdAt: $createdAt,
             updatedAt: $updatedAt,

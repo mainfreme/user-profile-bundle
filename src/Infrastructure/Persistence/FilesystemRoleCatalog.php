@@ -6,6 +6,8 @@ namespace SWH\UserProfile\Infrastructure\Persistence;
 
 use SWH\UserProfile\Domain\User\Model\RoleTree;
 use SWH\UserProfile\Domain\User\Port\RoleCatalogInterface;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\ValueObject\RoleLabel;
 use RuntimeException;
 
 final class FilesystemRoleCatalog implements RoleCatalogInterface
@@ -35,7 +37,7 @@ final class FilesystemRoleCatalog implements RoleCatalogInterface
         return RoleTree::fromConfig($this->readJson($path));
     }
 
-    public function add(string $role, string $label, ?string $parentRole): RoleTree
+    public function add(Role $role, RoleLabel $label, ?Role $parentRole): RoleTree
     {
         $tree = $this->tree()->withAddedNode($role, $label, $parentRole);
         $this->persist($tree);

@@ -20,12 +20,15 @@ use SWH\UserProfile\Application\Query\GetUser\GetUserQuery;
 use SWH\UserProfile\Application\Query\ListGroups\ListGroupsQuery;
 use SWH\UserProfile\Application\Query\ListUsers\ListUsersQuery;
 use SWH\UserProfile\Application\Service\MessageBusDispatcher;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupDescription;
 use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
 use SWH\UserProfile\Domain\User\Enum\UserRole;
 use SWH\UserProfile\Domain\User\ValueObject\Bio;
 use SWH\UserProfile\Domain\User\ValueObject\DisplayName;
 use SWH\UserProfile\Domain\User\ValueObject\Email;
 use SWH\UserProfile\Domain\User\ValueObject\PlainPassword;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\ValueObject\RoleLabel;
 use SWH\UserProfile\Domain\User\ValueObject\UserId;
 use SWH\UserProfile\Infrastructure\Http\Request\JsonBody;
 use OpenApi\Attributes as OA;
@@ -81,11 +84,13 @@ final class UserProfileRestController
     #[OA\Response(response: 400, description: 'Błąd walidacji')]
     public function createRole(JsonBody $body): JsonResponse
     {
+        $parentRole = $body->optionalString('parentRole');
+
         /** @var RoleTreeResponse $response */
         $response = $this->dispatcher->dispatchCommand(new CreateRoleCommand(
-            role: $body->string('role'),
-            label: $body->string('label'),
-            parentRole: $body->optionalString('parentRole'),
+            role: Role::fromCode($body->string('role')),
+            label: RoleLabel::fromString($body->string('label')),
+            parentRole: null !== $parentRole ? Role::fromCode($parentRole) : null,
         ));
 
         return $this->json($response, Response::HTTP_CREATED);
@@ -130,7 +135,7 @@ final class UserProfileRestController
         /** @var GroupResponse $response */
         $response = $this->dispatcher->dispatchCommand(new CreateGroupCommand(
             name: GroupName::fromString($body->string('name')),
-            description: $body->optionalString('description'),
+            description: GroupDescription::fromOptionalString($body->optionalString('description')),
             role: UserRole::tryFromString($body->optionalString('role')),
         ));
 

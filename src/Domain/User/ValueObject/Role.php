@@ -14,9 +14,9 @@ final readonly class Role
     }
 
     /**
-     * @param list<string> $allowedRoles
+     * Defines a new role code (format only — not checked against an allow-list).
      */
-    public static function fromString(string $value, array $allowedRoles): self
+    public static function fromCode(string $value): self
     {
         $normalized = strtoupper(trim($value));
 
@@ -28,11 +28,21 @@ final readonly class Role
             throw InvalidRoleException::invalidPrefix($value);
         }
 
-        if (!\in_array($normalized, $allowedRoles, true)) {
-            throw InvalidRoleException::notAllowed($normalized, $allowedRoles);
+        return new self($normalized);
+    }
+
+    /**
+     * @param list<string> $allowedRoles
+     */
+    public static function fromString(string $value, array $allowedRoles): self
+    {
+        $role = self::fromCode($value);
+
+        if (!\in_array($role->toString(), $allowedRoles, true)) {
+            throw InvalidRoleException::notAllowed($role->toString(), $allowedRoles);
         }
 
-        return new self($normalized);
+        return $role;
     }
 
     public static function restore(string $value): self
