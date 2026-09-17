@@ -6,6 +6,8 @@ namespace SWH\UserProfile\Domain\User\Model;
 
 use InvalidArgumentException;
 use SWH\UserProfile\Domain\User\Exception\InvalidRoleException;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\ValueObject\RoleLabel;
 
 final readonly class RoleTree
 {
@@ -116,24 +118,18 @@ final readonly class RoleTree
         return array_map(static fn (RoleNode $node): array => $node->toArray(), $this->roots);
     }
 
-    public function withAddedNode(string $role, string $label, ?string $parentRole = null): self
+    public function withAddedNode(Role $role, RoleLabel $label, ?Role $parentRole = null): self
     {
-        $normalized = strtoupper(trim($role));
-        $normalizedLabel = trim($label);
-        $normalizedParent = null === $parentRole || '' === trim($parentRole)
-            ? null
-            : strtoupper(trim($parentRole));
+        $normalized = $role->toString();
+        $normalizedLabel = $label->toString();
+        $normalizedParent = null === $parentRole ? null : $parentRole->toString();
 
         if ('' === $normalized) {
             throw InvalidRoleException::empty();
         }
 
         if (!str_starts_with($normalized, 'ROLE_')) {
-            throw InvalidRoleException::invalidPrefix($role);
-        }
-
-        if ('' === $normalizedLabel) {
-            throw InvalidRoleException::invalidLabel();
+            throw InvalidRoleException::invalidPrefix($normalized);
         }
 
         if (\in_array($normalized, $this->flattenCodes(), true)) {

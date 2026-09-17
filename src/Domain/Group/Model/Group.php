@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace SWH\UserProfile\Domain\Group\Model;
 
 use DateTimeImmutable;
-use SWH\UserProfile\Domain\Group\Exception\InvalidGroupDescriptionException;
+use SWH\UserProfile\Domain\Group\ValueObject\GroupDescription;
 use SWH\UserProfile\Domain\Group\ValueObject\GroupId;
 use SWH\UserProfile\Domain\Group\ValueObject\GroupName;
 use SWH\UserProfile\Domain\User\ValueObject\Role;
 
 final class Group
 {
-    private const DESCRIPTION_MAX_LENGTH = 500;
-
     private function __construct(
         private GroupId $id,
         private GroupName $name,
-        private string $description,
+        private GroupDescription $description,
         private ?Role $role,
         private DateTimeImmutable $createdAt,
         private DateTimeImmutable $updatedAt,
@@ -26,7 +24,7 @@ final class Group
 
     public static function create(
         GroupName $name,
-        string $description,
+        GroupDescription $description,
         ?Role $role,
         ?GroupId $id = null,
         ?DateTimeImmutable $createdAt = null,
@@ -36,7 +34,7 @@ final class Group
         return new self(
             $id ?? GroupId::generate(),
             $name,
-            self::normalizeDescription($description),
+            $description,
             $role,
             $now,
             $now,
@@ -46,7 +44,7 @@ final class Group
     public static function restore(
         GroupId $id,
         GroupName $name,
-        string $description,
+        GroupDescription $description,
         ?Role $role,
         DateTimeImmutable $createdAt,
         DateTimeImmutable $updatedAt,
@@ -64,7 +62,7 @@ final class Group
         return $this->name;
     }
 
-    public function description(): string
+    public function description(): GroupDescription
     {
         return $this->description;
     }
@@ -82,16 +80,5 @@ final class Group
     public function updatedAt(): DateTimeImmutable
     {
         return $this->updatedAt;
-    }
-
-    private static function normalizeDescription(string $description): string
-    {
-        $trimmed = trim($description);
-
-        if (mb_strlen($trimmed) > self::DESCRIPTION_MAX_LENGTH) {
-            throw InvalidGroupDescriptionException::tooLong(self::DESCRIPTION_MAX_LENGTH);
-        }
-
-        return $trimmed;
     }
 }

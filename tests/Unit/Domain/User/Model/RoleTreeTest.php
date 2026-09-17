@@ -7,6 +7,8 @@ namespace SWH\UserProfile\Tests\Unit\Domain\User\Model;
 use InvalidArgumentException;
 use SWH\UserProfile\Domain\User\Exception\InvalidRoleException;
 use SWH\UserProfile\Domain\User\Model\RoleTree;
+use SWH\UserProfile\Domain\User\ValueObject\Role;
+use SWH\UserProfile\Domain\User\ValueObject\RoleLabel;
 use PHPUnit\Framework\TestCase;
 
 final class RoleTreeTest extends TestCase
@@ -27,7 +29,7 @@ final class RoleTreeTest extends TestCase
     public function test_adds_role_under_parent(): void
     {
         $tree = RoleTree::fromConfig(RoleTree::defaultConfig())
-            ->withAddedNode('ROLE_EDITOR', 'Redaktor', 'ROLE_MODERATOR');
+            ->withAddedNode(Role::fromCode('ROLE_EDITOR'), RoleLabel::fromString('Redaktor'), Role::fromCode('ROLE_MODERATOR'));
 
         self::assertContains('ROLE_EDITOR', $tree->flattenCodes());
         self::assertSame('Redaktor', $tree->labels()['ROLE_EDITOR']);
@@ -37,7 +39,7 @@ final class RoleTreeTest extends TestCase
     public function test_adds_root_role_without_parent(): void
     {
         $tree = RoleTree::fromConfig(RoleTree::defaultConfig())
-            ->withAddedNode('ROLE_GUEST', 'Gość');
+            ->withAddedNode(Role::fromCode('ROLE_GUEST'), RoleLabel::fromString('Gość'));
 
         self::assertCount(2, $tree->roots());
         self::assertSame('ROLE_GUEST', $tree->roots()[1]->role);
